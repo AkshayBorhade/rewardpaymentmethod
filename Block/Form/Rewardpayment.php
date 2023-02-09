@@ -15,5 +15,5 @@ class Rewardpayment extends \Magento\OfflinePayments\Block\Form\AbstractInstruct
      *
      * @var string
      */
-    protected $_template = 'Devstree_Reward::form/cashondelivery.phtml';
+    protected $_template = 'Devstree_Reward::form/rewardpayment.phtml';
 }
