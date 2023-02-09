@@ -1,12 +1,14 @@
 <?xml version="1.0"?>
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-    layout="2columns-left" 
-    xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <update handle="customer_account"/>
+    <head>
+        <title>
+            Manage Reward
+        </title>
+    </head>
     <body>
-        <referenceContainer name="content"> 
-            <block class="Magento\Framework\View\Element\Template" name="reward_points" cacheable="false" template="Devstree_Reward::mypoints.phtml"> 
-            </block> 
+        <referenceContainer name="content">
+            <block class="Devstree\Reward\Block\Reward" name="reward_my_account" template="Devstree_Reward::mypoints.phtml"/>
         </referenceContainer>
     </body>
 </page>

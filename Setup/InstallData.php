@@ -1,82 +1,54 @@
 <?php
-/**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
-
 namespace Devstree\Reward\Setup;
 
-use Magento\Customer\Model\Customer;
-use Magento\Eav\Model\Entity\Attribute\Set as AttributeSet;
-use Magento\Eav\Model\Entity\Attribute\SetFactory as AttributeSetFactory;
-use Magento\Customer\Setup\CustomerSetupFactory;
+use Magento\Eav\Model\Config;
+use Magento\Eav\Setup\EavSetup;
+use Magento\Eav\Setup\EavSetupFactory;
+use Magento\Framework\Setup\InstallDataInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
-use Magento\Framework\Setup\InstallDataInterface;
 
-class InstallData implements InstallDataInterface
+class InstallData implements InstallDataInterface 
 {
+ private $eavSetupFactory;
 
-    /**
-     * @var CustomerSetupFactory
-     */
-    private $customerSetupFactory;
+ public function __construct(
+ EavSetupFactory $eavSetupFactory,
+ Config $eavConfig
+ ) 
+ {
+ $this->eavSetupFactory = $eavSetupFactory;
+ $this->eavConfig = $eavConfig;
+ }
 
-    /**
-     * @var AttributeSetFactory
-     */
-    private $attributeSetFactory;
+ public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context) 
+ {
+ $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
 
-    /**
-     * @var \Magento\Customer\Model\ResourceModel\CustomerFactory
-     */
-    protected $customerResourceFactory;
-    public function __construct(
-        CustomerSetupFactory $customerSetupFactory,
-        AttributeSetFactory $attributeSetFactory,
-        \Magento\Framework\App\State $state,
-        \Magento\Customer\Model\ResourceModel\CustomerFactory $customerResourceFactory
-    )
-    {
-        $this->customerSetupFactory = $customerSetupFactory;
-        $this->attributeSetFactory = $attributeSetFactory;
-        $this->customerResourceFactory = $customerResourceFactory;
-        $state->setAreaCode('frontend');
-    }
+ 
 
-    /**
-     * {@inheritdoc}
-     */
-    public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
-    {
-        $customerSetup = $this->customerSetupFactory->create(['setup' => $setup]);
-        $customerEntity = $customerSetup->getEavConfig()->getEntityType('customer');
-        $attributeSetId = $customerEntity->getDefaultAttributeSetId();
-        /** @var $attributeSet AttributeSet */
-        $attributeSet = $this->attributeSetFactory->create();
-        $attributeGroupId = $attributeSet->getDefaultGroupId($attributeSetId);
+//creating a custom text field programmatically
 
-        $customerSetup->addAttribute(
-            Customer::ENTITY,
-            'reward_amount',
-            [
-                'type' => 'decimal',
-                'label' => 'Reward Amount',
-                'required' => 0,
-                'input' => 'text',
-                'default' => 0,
-                'system' => 0, // <-- important, otherwise values aren't saved.
-                'frontend_class' => 'not-negative-amount',
-                'position' => 110
-            ]
-        );
-        $attribute = $customerSetup->getEavConfig()->getAttribute(Customer::ENTITY, 'reward_amount')
-            ->addData([
-                'attribute_set_id' => $attributeSetId,
-                'attribute_group_id' => $attributeGroupId,
-                'used_in_forms' => ['adminhtml_customer'],
-            ]);
+ $eavSetup->addAttribute(\Magento\Customer\Model\Customer::ENTITY, 'reward_amount', [
+    'label' => 'Reward Amount',
+    'system' => 0,
+    'position' => 700,
+    'sort_order' => 700,
+    'visible' => true,
+    'note' => '',
+    'type' => 'int',
+    'input' => 'text',
+    ]
+ );
 
-        $attribute->save();
-    }
+    $this->getEavConfig()->getAttribute('customer', 'reward_amount')
+          ->setData('is_user_defined', 1)
+          ->setData('is_required', 0)
+          ->setData('default_value', '')
+          ->setData('used_in_forms', ['adminhtml_customer'])->save();
+}
+ 
+ public function getEavConfig() {
+ return $this->eavConfig;
+ }
 }

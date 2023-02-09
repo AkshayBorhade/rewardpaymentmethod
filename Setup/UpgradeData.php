@@ -32,7 +32,7 @@ class UpgradeData implements UpgradeDataInterface
     {
         $setup->startSetup();
         $customerSetup = $this->customerSetupFactory->create(['setup' => $setup]);
-        if (version_compare($context->getVersion(), '1.0.0', '<')) {
+        if (version_compare($context->getVersion(), '0.1.0', '<')) {
            $customerSetup->updateAttribute(Customer::ENTITY, 'reward_amount', 'validate_rules', '{"not-negative-amount":true}');
         }
         $setup->endSetup();

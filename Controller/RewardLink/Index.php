@@ -1,6 +1,6 @@
 <?php
 
-namespace Devstree\Reward\Controller\Wallet;
+namespace Devstree\Reward\Controller\RewardLink;
 
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\View\Result\PageFactory;
